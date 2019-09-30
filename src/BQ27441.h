@@ -21,6 +21,11 @@ Arduino Uno (any 'duino should do)
 #ifndef BQ27441_H
 #define BQ27441_H
 
+/*! CPP guard */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -329,4 +334,7 @@ uint16_t BQ27441_status(bq27441_dev_t *dev);
 // extern BQ27441 lipo; // Use lipo.[] to interact with the library in an Arduino sketch
 // // Thanks for reading!
 
+#ifdef __cplusplus
+}
+#endif /* End of CPP guard */
 #endif
