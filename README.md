@@ -1,4 +1,4 @@
-SparkFun BQ27441-G1A LiPo Fuel Gauge Arduino Library
+SparkFun BQ27441-G1A LiPo Fuel Gauge Library
 ========================================
 >Note: Converted from original C++ implementation to C
 
@@ -8,20 +8,17 @@ SparkFun BQ27441-G1A LiPo Fuel Gauge Arduino Library
 
 Texas Instrument's [BQ27441-G1A](http://www.ti.com/product/BQ27441-G1) is a self-calibrating, I2C-based fuel gauge for lithium polymer (LiPo) batteries -- it measures your battery’s voltage to estimate its charge percentage and remaining capacity. The chip is also hooked up to a current-sensing resistor, which allows it to measure current and power! The fuel gauge makes up half of the [SparkFun Battery Babysitter](https://www.sparkfun.com/products/13777).
 
-This Arduino library abstracts away all of the low-level I2C communication, so you can easily initialize the fuel gauge then read voltage, state-of-charge, current, power, and capacity. It also implements all of the chip's low-battery, and SoC-change alerts on the GPOUT pin.
+~~This Arduino library abstracts away all of the low-level I2C communication~~, so you can easily initialize the fuel gauge then read voltage, state-of-charge, current, power, and capacity. It also implements all of the chip's low-battery, and SoC-change alerts on the GPOUT pin.
 
 Repository Contents
 -------------------
 
-* **/examples** - Example sketches for the library (.ino). Run these from the Arduino IDE. 
-* **/src** - Source files for the library (.cpp, .h).
-* **keywords.txt** - Keywords from this library that will be highlighted in the Arduino IDE. 
-* **library.properties** - General library properties for the Arduino package manager. 
+* **/examples** - Example applications.
+* **/src** - Source files for the library (.c, .h).
 
 Documentation
 --------------
 
-* **[Installing an Arduino Library Guide](https://learn.sparkfun.com/tutorials/installing-an-arduino-library)** - Basic information on how to install an Arduino library.
 * **[Product Repository](https://github.com/sparkfun/Battery_Babysitter)** - Main repository (including hardware files) for the SparkFun Battery Babysitter (which features the BQ27441-G1A ).
 * **[Hookup Guide](https://learn.sparkfun.com/tutorials/battery-babysitter-hookup-guide)** - Basic hookup guide for the SparkFun Battery Babysitter.
 
