@@ -78,8 +78,8 @@ typedef enum {
 } gpout_function;
 
 
-typedef (void*)(bq27441_com_func_ptr_t)(uint8_t addr, uint8_t *data, uint8_t len);
-typedef (void*)(bq27441_delay_ms_func_ptr_t)(uint32_t ms);
+typedef bool (*bq27441_com_func_ptr_t)(uint8_t addr, uint8_t *data, uint8_t len);
+typedef void (*bq27441_delay_func_ptr_t)(uint32_t delay_ms);
 
 
 typedef struct {
@@ -99,7 +99,7 @@ typedef struct {
 /**
     Initializes class variables
 */
-BQ27441_Init(bq27441_dev_t *dev);
+void BQ27441_Init(bq27441_dev_t *dev);
 
 /**
     Initializes I2C and verifies communication with the BQ27441.

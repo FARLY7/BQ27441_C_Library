@@ -179,6 +179,8 @@ static uint8_t readExtendedData(bq27441_dev_t *dev, uint8_t classID, uint8_t off
 */
 static bool writeExtendedData(bq27441_dev_t *dev, uint8_t classID, uint8_t offset, uint8_t * data, uint8_t len);
 
+
+static int32_t constrain(int32_t x, int32_t a, int32_t b);
 /////////////////////////////////
 // I2C Read and Write Routines //
 /////////////////////////////////
@@ -225,7 +227,7 @@ bool BQ27441_begin(bq27441_dev_t *dev)
 	uint16_t deviceID = 0;
 	
 
-	deviceID = BQ27441_deviceType(); // Read deviceType from BQ27441
+	deviceID = BQ27441_deviceType(dev); // Read deviceType from BQ27441
 	
 	if (deviceID == BQ27441_DEVICE_ID)
 	{
@@ -510,7 +512,7 @@ bool BQ27441_pulseGPOUT(bq27441_dev_t *dev)
 // Read the device type - should be 0x0421
 uint16_t BQ27441_deviceType(bq27441_dev_t *dev)
 {
-	return readControlWord(BQ27441_CONTROL_DEVICE_TYPE);
+	return readControlWord(dev, BQ27441_CONTROL_DEVICE_TYPE);
 }
 
 // Enter configuration mode - set userControl if calling from an Arduino sketch
@@ -529,7 +531,7 @@ bool BQ27441_enterConfig(bq27441_dev_t *dev, bool userControl)
 	{
 		int16_t timeout = BQ72441_I2C_TIMEOUT;
 		while ((timeout--) && (!(BQ27441_flags(dev) & BQ27441_FLAG_CFGUPMODE)))
-			dev->ms_delay(1);
+			dev->delay_ms(1);
 		
 		if (timeout > 0)
 			return true;
@@ -554,7 +556,7 @@ bool BQ27441_exitConfig(bq27441_dev_t *dev, bool resim)
 		{
 			int16_t timeout = BQ72441_I2C_TIMEOUT;
 			while ((timeout--) && ((BQ27441_flags(dev) & BQ27441_FLAG_CFGUPMODE)))
-				dev->ms_delay(1);
+				dev->delay_ms(1);
 			if (timeout > 0)
 			{
 				if (_sealFlag) seal(dev); // Seal back up if we IC was sealed coming in
@@ -665,7 +667,7 @@ static bool executeControlWord(bq27441_dev_t *dev, uint16_t function)
 	uint8_t subCommandMSB = (function >> 8);
 	uint8_t subCommandLSB = (function & 0x00FF);
 	uint8_t command[2] = {subCommandLSB, subCommandMSB};
-	uint8_t data[2] = {0, 0};
+	//uint8_t data[2] = {0, 0};
 	
 	if (dev->write((uint8_t) 0, command, 2))
 		return true;
@@ -757,12 +759,12 @@ static uint8_t readExtendedData(bq27441_dev_t *dev, uint8_t classID, uint8_t off
 	blockDataOffset(dev, offset / 32); // Write 32-bit block offset (usually 0)
 	
 	computeBlockChecksum(dev); // Compute checksum going in
-	uint8_t oldCsum = blockDataChecksum(dev);
+	//uint8_t oldCsum = blockDataChecksum(dev);
 	/*for (int i=0; i<32; i++)
 		Serial.print(String(readBlockData(i)) + " ");*/
 	retData = readBlockData(dev, offset % 32); // Read from offset (limit to 0-31)
 	
-	if (!_userConfigControl) BQ27441_exitConfig(dev);
+	if (!_userConfigControl) BQ27441_exitConfig(dev, true);
 	
 	return retData;
 }
@@ -783,7 +785,7 @@ static bool writeExtendedData(bq27441_dev_t *dev, uint8_t classID, uint8_t offse
 	
 	blockDataOffset(dev, offset / 32); // Write 32-bit block offset (usually 0)
 	computeBlockChecksum(dev); // Compute checksum going in
-	uint8_t oldCsum = blockDataChecksum(dev);
+	//uint8_t oldCsum = blockDataChecksum(dev);
 
 	// Write data bytes:
 	for (int i = 0; i < len; i++)
@@ -797,9 +799,20 @@ static bool writeExtendedData(bq27441_dev_t *dev, uint8_t classID, uint8_t offse
 	uint8_t newCsum = computeBlockChecksum(dev); // Compute the new checksum
 	writeBlockChecksum(dev, newCsum);
 
-	if (!_userConfigControl) BQ27441_exitConfig(dev);
+	if (!_userConfigControl) BQ27441_exitConfig(dev, true);
 	
 	return true;
+}
+
+static int32_t constrain(int32_t x, int32_t a, int32_t b)
+{   
+    if(x < a)
+        x = a;
+    
+    if(a > b)
+        x = b;
+
+    return x;
 }
 
 /*****************************************************************************
